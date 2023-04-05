@@ -1,0 +1,7 @@
+ok i expect to struggle a lot during this project so i am going to record them here for posterity
+
+1. immediately after setting up the connection to the database, I could not get authentication to work through discord. The bug presented by just completely crashing the problem each time that presented "Authenticate" on Discord. I thought it was an issue with the callback but no. No errors, no warning, just the console saying "Done in X.XXs" very helpful.
+
+eventually I found that if I ran it in production, the console would print "Segmentation fault" (wtf). That's when I stumbled across https://github.com/prisma/prisma/issues/10649#issuecomment-1247961614 which links this issue to prisma. This made me realize that the problem was actually in the database not in the authentication (not in AuthNext). So I turned my attention there, where I noticed that prisma studio would segfault immediately.
+
+I tried changing to dev versions of prisma and @prisma/client, looked at upgrading openssl but what eventually worked was downgrading node to version 16.x which is unsatisfying but this issue was literally active 2 hours ago so i think i have no choice. Overall, this took about an hour.
