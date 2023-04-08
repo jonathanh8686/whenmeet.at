@@ -5,6 +5,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import { Header } from "~/components/header";
+import { Title } from "~/components/title";
+import { HomePage } from "~/components/homepage";
 
 
 const GroupCreate = () => {
@@ -46,6 +48,9 @@ const GroupJoin = () => {
 }
 
 const Home: NextPage = () => {
+
+  const sessionData = useSession();
+
   return (
     <>
       <Head>
@@ -53,13 +58,8 @@ const Home: NextPage = () => {
         <meta name="description" content="whenmeet - by jonathan hsieh" />
       </Head>
       <div className="h-screen bg-gradient-to-b from-[#1d0441] to-[#3f1a11]">
-        <Header/>
-        <main className="flex flex-col items-center justify-center text-center">
-          <div className="text-5xl text-white">whenmeet </div>
-          {/* <GroupCreate ></GroupCreate>
-          <GroupJoin></GroupJoin> */}
-        </main>
-
+        <Header />
+        {sessionData.status === "loading" ? <div/> : (sessionData.status === "authenticated" ? <HomePage/> : <Title/>)}
       </div>
     </>
   );
