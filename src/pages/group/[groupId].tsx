@@ -36,7 +36,7 @@ const GroupDetail = () => {
                     <div className="grid grid-cols-6 gap-4 justify-start my-5">
                         {group?.users.map((user) => ( // only get the first 13 users
                             (user.user && user.user.image && user.user.name ?
-                                <Image key={user.user.id} alt={`${user.user.name} pfp`} className="rounded-full w-full h-full" src={user.user.image}></Image> : <div key={user.userId}>invalid user</div>
+                                <Image width="100" height="100" key={user.user.id} alt={`${user.user.name} pfp`} className="rounded-full w-full h-full" src={user.user.image}></Image> : <div key={user.userId}>invalid user</div>
                             )))}
                     </div>
                 </div>

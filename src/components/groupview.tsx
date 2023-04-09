@@ -35,7 +35,7 @@ const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCard
                 <p className="grid grid-cols-5 gap-2 text-gray-700 text-base">
                     {group?.users.slice(0, 13).map((user) => ( // only get the first 13 users
                     (user && user.user && user.user.image && user.user.name? 
-                        <Image key={user.userId} alt={`${user.user.name} pfp`} className="rounded-full w-12" src={user.user.image}></Image> : <div key={user.userId}>error</div>)
+                        <Image width={100} height={100} key={user.userId} alt={`${user.user.name} pfp`} className="rounded-full w-12" src={user.user.image}></Image> : <div key={user.userId}>error</div>)
                     ))}
                 </p>
                 <IoMdExit className="absolute hover:fill-red-500 bottom-0 right-0 m-2 text-4xl"
