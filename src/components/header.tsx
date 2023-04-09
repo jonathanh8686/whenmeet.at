@@ -2,7 +2,6 @@ import React from "react";
 import { Auth } from "./auth";
 
 export const Header = () => {
-  const [navbarOpen, setNavbarOpen] = React.useState(false);
   return (
     <>
       <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-[#14012b]">
