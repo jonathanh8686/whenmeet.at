@@ -16,7 +16,7 @@ const Home: NextPage = () => {
         <title>whenmeet.at</title>
         <meta name="description" content="whenmeet - by jonathan hsieh" />
       </Head>
-      <div className="h-screen bg-gradient-to-b from-[#1d0441] to-[#3f1a11]">
+      <div className="w-screen h-screen bg-gradient-to-b from-[#1d0441] to-[#3f1a11]">
         <Header />
         {sessionData.status === "loading" ? <div /> : (sessionData.status === "authenticated" ? <HomePage /> : <Title />)}
       </div>

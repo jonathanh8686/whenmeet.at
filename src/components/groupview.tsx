@@ -27,7 +27,7 @@ const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCard
 
     return (
         <Link href={`/group/${encodeURIComponent(groupId)}`}>
-            <div className="relative w-80 h-64 overflow-clip rounded shadow-lg bg-white  hover:bg-slate-300 hover:pointer px-6 py-4">
+            <div className="relative w-72 h-64 overflow-clip rounded shadow-lg bg-white  hover:bg-slate-300 hover:pointer px-6 py-4">
                 <div className="flex mb-2">
                     <div className="text-center font-bold text-xl">{group?.name}</div>
                     <div className="flex text-slate-500 text-sm items-center ml-auto">({group.users.length} {group.users.length > 1 ? "members" : "member"})</div>
@@ -68,7 +68,7 @@ const AddGroupCard = (props: AddGroupProp) => {
     return (
         <>
             <button onClick={() => setShowAddModal(true)}>
-                {<div className="flex items-center text-center justify-center border-2 border-dashed w-80 h-64 overflow-clip rounded shadow-lg hover:pointer hover:bg-slate-400 hover:bg-opacity-25 px-6 py-4 text-5xl">
+                {<div className="flex items-center text-center justify-center border-2 border-dashed w-72 h-64 overflow-clip rounded shadow-lg hover:pointer hover:bg-slate-400 hover:bg-opacity-25 px-6 py-4 text-5xl">
                     ➕
                 </div>}
             </button>
@@ -91,7 +91,6 @@ const AddGroupCard = (props: AddGroupProp) => {
                                 onClick={(e) => {
                                     e.stopPropagation()
                                     e.nativeEvent.stopImmediatePropagation()
-                                    console.log("leave click")
                                 }}>
                                 Create/Join
                             </button>
@@ -117,7 +116,7 @@ export const GroupView = () => {
     }
 
     return (
-        <div className="grid grid-cols-4 gap-4 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-12 mx-10">
             {user.groups.map((group) => (
                 <GroupCard key={group.groupId} groupId={group.groupId} refetchGroups={() => {void refetchGroups()}}></GroupCard>
             ))}
