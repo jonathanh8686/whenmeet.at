@@ -1,9 +1,8 @@
-import { GetStaticPaths, GetStaticProps } from "next";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Header } from "~/components/header";
-import { api, type RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
+import Image from "next/image";
 
 const GroupDetail = () => {
 
@@ -36,8 +35,9 @@ const GroupDetail = () => {
                     <span className="text-white text-3xl font-bold">Members:</span>
                     <div className="grid grid-cols-6 gap-4 justify-start my-5">
                         {group?.users.map((user) => ( // only get the first 13 users
-                            <img key={user.userId} className="rounded-full w-full h-full" src={user.user.image!}></img>
-                        ))}
+                            (user.user && user.user.image && user.user.name ?
+                                <Image key={user.user.id} alt={`${user.user.name} pfp`} className="rounded-full w-full h-full" src={user.user.image}></Image> : <div key={user.userId}>invalid user</div>
+                            )))}
                     </div>
                 </div>
                 <div className="col-span-2 bg-white bg-opacity-30 m-10 h-full">

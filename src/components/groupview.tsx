@@ -3,7 +3,7 @@ import { useState } from "react";
 import { api } from "~/utils/api"
 import { IoMdExit } from 'react-icons/io'
 import Link from "next/link";
-
+import Image from "next/image";
 
 interface GroupCardProps {
     groupId: string
@@ -21,16 +21,21 @@ const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCard
         }
     })
 
+    if(!group) {
+        return <h1>Error: undefined group</h1>
+    }
+
     return (
         <Link href={`/group/${encodeURIComponent(groupId)}`}>
             <div className="relative w-80 h-64 overflow-clip rounded shadow-lg bg-white  hover:bg-slate-300 hover:pointer px-6 py-4">
                 <div className="flex mb-2">
                     <div className="text-center font-bold text-xl">{group?.name}</div>
-                    <div className="flex text-slate-500 text-sm items-center ml-auto">({group?.users.length} {group?.users.length! > 1 ? "members" : "member"})</div>
+                    <div className="flex text-slate-500 text-sm items-center ml-auto">({group.users.length} {group.users.length > 1 ? "members" : "member"})</div>
                 </div>
                 <p className="grid grid-cols-5 gap-2 text-gray-700 text-base">
                     {group?.users.slice(0, 13).map((user) => ( // only get the first 13 users
-                        <img key={user.userId} className="rounded-full w-12" src={user.user.image!}></img>
+                    (user && user.user && user.user.image && user.user.name? 
+                        <Image key={user.userId} alt={`${user.user.name} pfp`} className="rounded-full w-12" src={user.user.image}></Image> : <div key={user.userId}>error</div>)
                     ))}
                 </p>
                 <IoMdExit className="absolute hover:fill-red-500 bottom-0 right-0 m-2 text-4xl"
@@ -103,14 +108,20 @@ export const GroupView = () => {
     const { data: user, refetch: refetchGroups } = api.user.getSelfWithGroups.useQuery(
         undefined,
         { enabled: sessionData.data?.user !== undefined }
-    );
+    ) ;
+
+    if(!user) {
+        return  (
+            <div>could not find user</div>
+        )
+    }
 
     return (
         <div className="grid grid-cols-4 gap-4 mt-12">
-            {user?.groups.map((group) => (
-                <GroupCard key={group.groupId} groupId={group.groupId} refetchGroups={refetchGroups}></GroupCard>
+            {user.groups.map((group) => (
+                <GroupCard key={group.groupId} groupId={group.groupId} refetchGroups={() => {void refetchGroups()}}></GroupCard>
             ))}
-            <AddGroupCard refetchGroups={refetchGroups} />
+            <AddGroupCard refetchGroups={() => {void refetchGroups()}} />
         </div>
     )
 }
