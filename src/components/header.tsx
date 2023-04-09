@@ -10,7 +10,7 @@ export const Header = () => {
           <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <a
               className="text-3xl leading-relaxed inline-block mr-4 whitespace-nowrap text-violet-700 font-extrabold"
-              href=""
+              href=".."
             >
               whenmeet
             </a>

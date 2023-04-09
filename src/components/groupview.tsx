@@ -2,6 +2,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { api } from "~/utils/api"
 import { IoMdExit } from 'react-icons/io'
+import Link from "next/link";
 
 
 interface GroupCardProps {
@@ -21,7 +22,7 @@ const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCard
     })
 
     return (
-        <button>
+        <Link href={`/group/${encodeURIComponent(groupId)}`}>
             <div className="relative w-80 h-64 overflow-clip rounded shadow-lg bg-white  hover:bg-slate-300 hover:pointer px-6 py-4">
                 <div className="flex mb-2">
                     <div className="text-center font-bold text-xl">{group?.name}</div>
@@ -33,13 +34,14 @@ const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCard
                     ))}
                 </p>
                 <IoMdExit className="absolute hover:fill-red-500 bottom-0 right-0 m-2 text-4xl"
-                    onClick={() => {
+                    onClick={(e) => {
+                        e.preventDefault()
                         leaveGroup.mutate({
                             groupId: groupId
                         })
                     }}></IoMdExit>
             </div>
-        </button>
+        </Link>
     )
 }
 
@@ -80,8 +82,11 @@ const AddGroupCard = (props: AddGroupProp) => {
                         <div className="m-20">
                             <input className="h-10 bg-slate-200 text-gray-700 border border-gray-200 rounded-xl py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-slate-800" placeholder="Group Name"
                                 value={groupName} onChange={(e) => { setGroupName(e.target.value) }} />
-                            <button className="bg-orange-800 h-10 text-white active:bg-pink-950 font-bold uppercase text-sm mx-5 px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150" type="button"
-                                onClick={() => {
+                            <button className="bg-orange-800 h-10 text-white active:bg-pink-950 font-bold uppercase text-sm mx-5 px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150" type="submit"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    e.nativeEvent.stopImmediatePropagation()
+                                    console.log("leave click")
                                 }}>
                                 Create/Join
                             </button>

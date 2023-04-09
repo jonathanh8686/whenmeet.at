@@ -1,70 +1,51 @@
-import { GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { Header } from "~/components/header";
 import { api, type RouterOutputs } from "~/utils/api";
 
-// const GroupDetail = () => {
+const GroupDetail = () => {
 
-//     type Group = RouterOutputs['group']['getGroup'];
-//     const router = useRouter();
-//     const [group, setGroup] = useState<Group | null>(null);
+    const router = useRouter()
+    const groupId = router.query.groupId as string
 
-//     useEffect(() => {
-//         if (!router.isReady) return
-//         console.log(api.group.getGroup.useQuery({
-//             groupId: Array.isArray(router.query.groupId!) ? router.query.groupId[0]! : router.query.groupId!
-//         }).data)
+    const { data: group, isLoading } = api.group.getGroup.useQuery({
+        groupId: groupId
+    })
 
-//     }, [router.isReady])
+    if (isLoading) {
+        return (<p>Loading...</p>)
+    }
 
-//     return (
-//         <>
-//             {group &&
-//                 <div>
-//                     {group.id}
-//                     <br></br>
-//                     {group.name}
-//                 </div>
+    if (!group) {
+        return (
+            <div>404</div>
+        )
+    }
 
-//             }
-//         </>
-//     )
-// }
-
-interface GroupDetailProps {
-    groupId: string
-}
-
-const GroupDetail = (props: GroupDetailProps) => {
+    console.log(group)
 
     return (
-        <h1>this is a prop that contains {props.groupId}</h1>
+        <div className="h-screen bg-gradient-to-b from-[#1d0441] to-[#3f1a11]">
+            <Header />
+            <div className="grid grid-cols-3">
+                <span className="text-center w-full col-span-full pt-10 text-6xl text-white font-extrabold"><span className="text-slate-200">{group.name}</span></span>
+                <span className="text-center w-full col-span-full pt-2 text-xl text-white font-extrabold"><span className="text-slate-500">{group.id}</span></span>
+                <div className="flex flex-col border-4 rounded-3xl items-center m-10 p-5">
+                    <span className="text-white text-3xl font-bold">Members:</span>
+                    <div className="grid grid-cols-6 gap-4 justify-start my-5">
+                        {group?.users.map((user) => ( // only get the first 13 users
+                            <img key={user.userId} className="rounded-full w-full h-full" src={user.user.image!}></img>
+                        ))}
+                    </div>
+                </div>
+                <div className="col-span-2 bg-white bg-opacity-30 m-10 h-full">
+
+                </div>
+            </div>
+        </div>
     )
 }
 
 export default GroupDetail
-
-export async function getStaticPaths() {
-    console.log(api.user)
-    const { data: userWithGroups } = api.user.getSelfWithGroups.useQuery();
-
-    return {
-        paths: [
-            userWithGroups?.groups.map((e) => (
-                {
-                    params: {
-                        id: e.groupId
-                    }
-                }
-            ))
-        ],
-        fallback: false, // can also be true or 'blocking'
-    }
-}
-
-export const getStaticProps: GetStaticProps = async (context) => {
-    return {
-        props : { groupId: context.params!['groupId'] }
-    }
-
-}
