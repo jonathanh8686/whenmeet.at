@@ -22,8 +22,21 @@ export const userRouter = createTRPCRouter({
         }
       })
     }),
+    
+    leave: protectedProcedure
+    .input(z.object({groupId: z.string()}))
+    .mutation(async ({ctx, input}) => {
+      return ctx.prisma.userGroup.delete({
+        where: {
+          userId_groupId: {
+            userId: ctx.session.user.id,
+            groupId: input.groupId
+          }
+        },
+      })
+    }),
 
-  getOwnGroups: protectedProcedure
+  getSelfWithGroups: protectedProcedure
     .query(({ ctx }) => {
       return ctx.prisma.user.findUniqueOrThrow({
         where: {

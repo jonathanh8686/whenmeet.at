@@ -59,7 +59,7 @@ const Home: NextPage = () => {
       </Head>
       <div className="h-screen bg-gradient-to-b from-[#1d0441] to-[#3f1a11]">
         <Header />
-        {sessionData.status === "loading" ? <div/> : (sessionData.status === "authenticated" ? <HomePage/> : <Title/>)}
+        {sessionData.status === "loading" ? <div /> : (sessionData.status === "authenticated" ? <HomePage /> : <Title />)}
       </div>
     </>
   );

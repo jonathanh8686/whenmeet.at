@@ -70,7 +70,7 @@ model TravelEvent {
 }
 
 model Group {
-  id    String      @id @default(cuid())
+  id    String      @id @default(nanoid())
   name  String
   users UserGroup[]
 }

@@ -11,6 +11,13 @@ export const groupRouter = createTRPCRouter({
       return ctx.prisma.group.create({
         data: {
           name: input.name,
+          users: {
+            create: [
+              {
+                userId: ctx.session.user.id
+              }
+            ]
+          }
         },
       });
     }),
