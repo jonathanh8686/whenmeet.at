@@ -1,9 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
-import { api } from "~/utils/api";
-import { useState } from "react";
 import { Header } from "~/components/header";
 import { Title } from "~/components/title";
 import { HomePage } from "~/components/homepage";
