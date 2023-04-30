@@ -4,6 +4,7 @@ import { api } from "~/utils/api"
 import { IoMdExit } from 'react-icons/io'
 import Link from "next/link";
 import Image from "next/image";
+import { ClipLoader, DotLoader, GridLoader } from "react-spinners";
 
 interface GroupCardProps {
     groupId: string
@@ -21,8 +22,18 @@ const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCard
         }
     })
 
-    if(!group) {
-        return <h1>Error: undefined group</h1>
+    if (!group) {
+        return (
+            <div className="relative w-72 h-64 overflow-clip rounded shadow-lg bg-white hover:bg-slate-300 hover:pointer px-6 py-4 flex items-center align-middle justify-center">
+                <GridLoader
+                    color={"#8500a6"}
+                    loading={true}
+                    size={20}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                />
+            </div>
+        )
     }
 
     return (
@@ -34,8 +45,8 @@ const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCard
                 </div>
                 <p className="grid grid-cols-5 gap-2 text-gray-700 text-base">
                     {group?.users.slice(0, 13).map((user) => ( // only get the first 13 users
-                    (user && user.user && user.user.image && user.user.name? 
-                        <Image width={100} height={100} key={user.userId} alt={`${user.user.name} pfp`} className="rounded-full w-12" src={user.user.image}></Image> : <div key={user.userId}>error</div>)
+                        (user && user.user && user.user.image && user.user.name ?
+                            <Image width={100} height={100} key={user.userId} alt={`${user.user.name} pfp`} className="rounded-full w-12" src={user.user.image}></Image> : <div key={user.userId}>error</div>)
                     ))}
                 </p>
                 <IoMdExit className="absolute hover:fill-red-500 bottom-0 right-0 m-2 text-4xl"
@@ -107,20 +118,30 @@ export const GroupView = () => {
     const { data: user, refetch: refetchGroups } = api.user.getSelfWithGroups.useQuery(
         undefined,
         { enabled: sessionData.data?.user !== undefined }
-    ) ;
+    );
 
-    if(!user) {
-        return  (
-            <div>could not find user</div>
+    if (!user) {
+        return (
+            <div>
+                <br></br>
+                <br></br>
+                <DotLoader
+                    color={"#4d0145"}
+                    loading={true}
+                    size={100}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                />
+            </div>
         )
     }
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-12 mx-10">
             {user.groups.map((group) => (
-                <GroupCard key={group.groupId} groupId={group.groupId} refetchGroups={() => {void refetchGroups()}}></GroupCard>
+                <GroupCard key={group.groupId} groupId={group.groupId} refetchGroups={() => { void refetchGroups() }}></GroupCard>
             ))}
-            <AddGroupCard refetchGroups={() => {void refetchGroups()}} />
+            <AddGroupCard refetchGroups={() => { void refetchGroups() }} />
         </div>
     )
 }
