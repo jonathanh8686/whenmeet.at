@@ -4,14 +4,17 @@ import { api } from "~/utils/api"
 import { IoMdExit } from 'react-icons/io'
 import Link from "next/link";
 import Image from "next/image";
-import { ClipLoader, DotLoader, GridLoader } from "react-spinners";
+import { DotLoader, GridLoader } from "react-spinners";
+import { group, groupCollapsed } from "console";
+import { Group } from "@prisma/client";
 
 interface GroupCardProps {
     groupId: string
     refetchGroups: () => void;
+    removeGroup: (groupId: string) => void;
 }
 
-const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCardProps) => {
+const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups, removeGroup: removeGroup }: GroupCardProps) => {
     const { data: group } = api.group.getGroup.useQuery({
         groupId: groupId
     })
@@ -52,6 +55,7 @@ const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCard
                 <IoMdExit className="absolute hover:fill-red-500 bottom-0 right-0 m-2 text-4xl"
                     onClick={(e) => {
                         e.preventDefault()
+                        removeGroup(groupId);
                         leaveGroup.mutate({
                             groupId: groupId
                         })
@@ -64,6 +68,7 @@ const GroupCard = ({ groupId: groupId, refetchGroups: refetchGroups }: GroupCard
 
 interface AddGroupProp {
     refetchGroups: () => void;
+    optimisticAdd: (groupName: string) => void;
 }
 
 const AddGroupCard = (props: AddGroupProp) => {
@@ -88,6 +93,7 @@ const AddGroupCard = (props: AddGroupProp) => {
                 <div className="absolute left-1/2 top-1/2 h-1/5 -translate-x-1/2 -translate-y-1/2 flex z-50 outline-none focus:outline-none bg-slate-500 border-3 rounded-2xl">
                     <form className="w-full h-full flex justify-center" onSubmit={(e) => {
                         e.preventDefault()
+                        props.optimisticAdd(groupName);
                         createGroup.mutate({
                             name: groupName
                         });
@@ -117,8 +123,14 @@ export const GroupView = () => {
     const sessionData = useSession();
     const { data: user, refetch: refetchGroups } = api.user.getSelfWithGroups.useQuery(
         undefined,
-        { enabled: sessionData.data?.user !== undefined }
+        {
+            enabled: sessionData.data?.user !== undefined,
+            onSuccess: (user) => {
+                setGroups(user.groups.map(e => e.group));
+            }
+        }
     );
+    const [groups, setGroups] = useState<Group[]>([]);
 
     if (!user) {
         return (
@@ -138,10 +150,16 @@ export const GroupView = () => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-12 mx-10">
-            {user.groups.map((group) => (
-                <GroupCard key={group.groupId} groupId={group.groupId} refetchGroups={() => { void refetchGroups() }}></GroupCard>
+            {groups.map((group) => (
+                <GroupCard key={group.id} groupId={group.id} refetchGroups={() => { void refetchGroups() }}
+                    removeGroup={(groupId) => {
+                        setGroups(groups => groups.filter(g => g.id != groupId));
+                    }}/>
             ))}
-            <AddGroupCard refetchGroups={() => { void refetchGroups() }} />
+            <AddGroupCard refetchGroups={() => { void refetchGroups() }} optimisticAdd={(groupName) => {
+                // add an empty group, this will load until the database catchs up
+                setGroups((grps: Group[]) => [...grps, { id: "pending...", name: "empty" }]);
+            }} />
         </div>
     )
 }
